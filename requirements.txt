@@ -1,0 +1,4 @@
+flask_sqlalchemy
+flask
+htmlentities
+flask-cors
