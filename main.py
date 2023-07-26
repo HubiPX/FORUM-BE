@@ -17,11 +17,8 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 app.permanent_session_lifetime = timedelta(minutes=60)
-<<<<<<< HEAD
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 app.config['SESSION_COOKIE_SECURE'] = True
-=======
->>>>>>> 535e72ab398ea14b456f61f4d4e4b3c5ccfbed9e
 CORS(app, supports_credentials=True)
 app.config.from_object('database.config.Config')
 
