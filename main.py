@@ -17,7 +17,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 app.permanent_session_lifetime = timedelta(minutes=60)
-CORS(app)
+CORS(app, supports_credentials=True)
 app.config.from_object('database.config.Config')
 
 DEFAULT_ADMIN_USERNAME = "admin"
