@@ -14,10 +14,11 @@ users = Blueprint('users', __name__)
 def _create_():
     post = request.get_json()
 
+    repassword = post.get("repassword")
     password = post.get("password")
     username = post.get("username")
 
-    if len(password) < 3 or len(username) < 3:
+    if len(password) < 3 or len(username) < 3 or password != repassword:
         return '', 400
 
     hash_pwd = Hash.hash_password(password)
