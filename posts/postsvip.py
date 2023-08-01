@@ -54,6 +54,7 @@ def get_all_posts():
     for post, user in all_posts:
         print_posts.append({
             "user": user.username,
+            "admin": user.admin,
             "id": post.id,
             "content": post.content,
             "date": post.date

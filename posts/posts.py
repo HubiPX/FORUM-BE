@@ -55,6 +55,7 @@ def get_all_posts():
         if not ((post.date - today).total_seconds() / 3600) > 24:
             print_posts.append({
                 "user": user.username,
+                "admin": user.admin,
                 "id": post.id,
                 "content": post.content,
                 "date": post.date
