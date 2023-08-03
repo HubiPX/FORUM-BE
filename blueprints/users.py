@@ -18,6 +18,9 @@ def _create_():
     password = post.get("password")
     username = post.get("username")
 
+    if password != repassword:
+        return '', 422
+
     if len(password) < 3 or len(username) < 3 or password != repassword:
         return '', 400
 
@@ -52,6 +55,10 @@ def _change_password_():
 
     current_pwd = post.get("password")
     new_pwd = post.get("new_password")
+    new_pwd2 = post.get("new_password2")
+
+    if new_pwd != new_pwd2:
+        return '', 422
 
     if not current_pwd or not new_pwd or len(new_pwd) < 3 or current_pwd == new_pwd:
         return '', 400
@@ -68,7 +75,7 @@ def _change_password_():
 
 
 @users.route("<user_id>/lvl-admin", methods=['post'])
-@Auth.logged_mod
+@Auth.logged_admin
 def _lvl_admin_(user_id):
     post = request.get_json()
     is_admin = post.get("admin")
