@@ -15,6 +15,7 @@ class Users(db.Model):
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(192), nullable=False)
     admin = db.Column(db.Integer, primary_key=False)
+    ban_date = db.Column(db.DateTime, nullable=True)
 
 
 class Posts(db.Model):

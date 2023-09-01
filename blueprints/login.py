@@ -21,6 +21,9 @@ def _login_():
     if not user or not Hash.verify_password(user.password, password):
         return '', 401
 
+    if user.ban_date is not None:
+        return {"ban_date": user.ban_date}, 403
+
     session['logged_in'] = True
     session['user_id'] = user.id
     return {"username": user.username, "is_admin": user.admin, "user_id": user.id}, 200

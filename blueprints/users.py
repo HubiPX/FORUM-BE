@@ -100,9 +100,13 @@ def _lvl_admin_(user_id):
 @Auth.logged_admin
 def _reset_password_(user_id):
     user = Users.query.filter_by(id=user_id).first()
+    your_id = session.get("user_id")
+    you = Users.query.filter_by(id=your_id).first()
 
     if not user:
         return '', 404
+    elif int(user.admin) >= int(you.admin):
+        return '', 403
 
     characters = string.ascii_lowercase + string.digits
     new_password = ''.join(choices(characters, k=6))
@@ -116,10 +120,16 @@ def _reset_password_(user_id):
 @users.route("/<user_id>/delete", methods=['get'])
 @Auth.logged_admin
 def _delete_(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    your_id = session.get("user_id")
+    you = Users.query.filter_by(id=your_id).first()
+
     if user_id == "1":
         return '', 400
     elif not Users.query.filter_by(id=user_id).first():
         return '', 404
+    elif int(user.admin) >= int(you.admin):
+        return '', 403
 
     Posts.query.filter_by(owner_id=user_id).delete()
     Postsa.query.filter_by(owner_id=user_id).delete()
