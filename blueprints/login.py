@@ -2,6 +2,7 @@ import json
 from flask import Blueprint, request, session, Response
 from database.models import Users
 from database.hash import Hash
+import datetime
 
 login = Blueprint('login', __name__)
 
@@ -22,7 +23,11 @@ def _login_():
         return '', 401
 
     if user.ban_date is not None:
-        return {"ban_date": user.ban_date}, 403
+        today = datetime.datetime.now()
+        if user.ban_date < today:
+            user.ban_date = None
+        else:
+            return {"ban_date": user.ban_date}, 403
 
     session['logged_in'] = True
     session['user_id'] = user.id

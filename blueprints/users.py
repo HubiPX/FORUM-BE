@@ -6,6 +6,7 @@ from database.models import Users, Posts, Postsa, Postsm, Postsv, Postsnews, Pos
 from database.hash import Hash
 from blueprints.auth import Auth
 import re
+import datetime
 
 users = Blueprint('users', __name__)
 
@@ -44,7 +45,8 @@ def _users_():
     return [{
         "id": x.id,
         "username": x.username,
-        "is_admin": x.admin
+        "is_admin": x.admin,
+        "ban": x.ban_date
     } for x in all_users]
 
 
@@ -117,7 +119,7 @@ def _reset_password_(user_id):
     return {"new_password": new_password}
 
 
-@users.route("/<user_id>/delete", methods=['get'])
+@users.route("/<user_id>/delete", methods=['post'])
 @Auth.logged_admin
 def _delete_(user_id):
     user = Users.query.filter_by(id=user_id).first()
@@ -131,14 +133,31 @@ def _delete_(user_id):
     elif int(user.admin) >= int(you.admin):
         return '', 403
 
-    Posts.query.filter_by(owner_id=user_id).delete()
-    Postsa.query.filter_by(owner_id=user_id).delete()
-    Postsm.query.filter_by(owner_id=user_id).delete()
-    Postsv.query.filter_by(owner_id=user_id).delete()
-    Postsnews.query.filter_by(owner_id=user_id).delete()
-    Postsbugs.query.filter_by(owner_id=user_id).delete()
-    Postssug.query.filter_by(owner_id=user_id).delete()
+    post = request.get_json()
+    days = post.get("days")
 
-    Users.query.filter_by(id=user_id).delete()
+    try:
+        time = int(days)
+    except ValueError:
+        return '', 400
+
+    if time == 0:
+        user.ban_date = None
+    elif 0 < time < 100:
+        today = datetime.datetime.now()
+        ban = today + datetime.timedelta(days=time)
+        user.ban_date = ban
+    elif time > 100:
+        Posts.query.filter_by(owner_id=user_id).delete()
+        Postsa.query.filter_by(owner_id=user_id).delete()
+        Postsm.query.filter_by(owner_id=user_id).delete()
+        Postsv.query.filter_by(owner_id=user_id).delete()
+        Postsnews.query.filter_by(owner_id=user_id).delete()
+        Postsbugs.query.filter_by(owner_id=user_id).delete()
+        Postssug.query.filter_by(owner_id=user_id).delete()
+        Users.query.filter_by(id=user_id).delete()
+    else:
+        return '', 404
+
     db.session.commit()
     return '', 200
