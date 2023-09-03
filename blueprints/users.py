@@ -1,6 +1,7 @@
 import string
 from random import choices
 from flask import Blueprint, session, request
+from sqlalchemy import desc
 from database.models import db
 from database.models import Users, Posts, Postsa, Postsm, Postsv, Postsnews, Postsbugs, Postssug
 from database.hash import Hash
@@ -46,7 +47,21 @@ def _users_():
         "id": x.id,
         "username": x.username,
         "is_admin": x.admin,
-        "ban": x.ban_date
+        "ban": x.ban_date,
+        "last_login": x.last_login
+    } for x in all_users]
+
+
+@users.route('stats', methods=['get'])
+@Auth.logged_user
+def _stats_():
+    all_users = Users.query.order_by(desc(Users.score)).all()
+
+    return [{
+        "username": x.username,
+        "is_admin": x.admin,
+        "last_login": x.last_login,
+        "score": x.score
     } for x in all_users]
 
 
@@ -143,11 +158,11 @@ def _delete_(user_id):
 
     if time == 0:
         user.ban_date = None
-    elif 0 < time < 100:
+    elif 0 < time < 366:
         today = datetime.datetime.now()
         ban = today + datetime.timedelta(days=time)
         user.ban_date = ban
-    elif time > 100:
+    elif time == 2580:
         Posts.query.filter_by(owner_id=user_id).delete()
         Postsa.query.filter_by(owner_id=user_id).delete()
         Postsm.query.filter_by(owner_id=user_id).delete()
