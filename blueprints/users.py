@@ -48,7 +48,8 @@ def _users_():
         "username": x.username,
         "is_admin": x.admin,
         "ban": x.ban_date,
-        "last_login": x.last_login
+        "last_login": x.last_login,
+        "score": x.score
     } for x in all_users]
 
 
@@ -132,6 +133,32 @@ def _reset_password_(user_id):
     user.password = hash_pwd
     db.session.commit()
     return {"new_password": new_password}
+
+
+@users.route("/<user_id>/set-score", methods=['post'])
+@Auth.logged_admin
+def _set_score_(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    your_id = session.get("user_id")
+    you = Users.query.filter_by(id=your_id).first()
+
+    if not Users.query.filter_by(id=user_id).first():
+        return '', 404
+    elif int(user.admin) > int(you.admin):
+        return '', 403
+
+    post = request.get_json()
+    new_score = post.get("new_score")
+
+    try:
+        score = int(new_score)
+    except ValueError:
+        return '', 400
+
+    user.score = score
+
+    db.session.commit()
+    return '', 200
 
 
 @users.route("/<user_id>/delete", methods=['post'])
