@@ -36,6 +36,7 @@ def _login_():
         user.score = 10
     elif today.date() != user.last_login.date():
         user.score += 10
+        user.last_login = today
     elif today.date() == user.last_login.date():
         user.last_login = today
 

@@ -142,7 +142,7 @@ def _delete_(user_id):
     you = Users.query.filter_by(id=your_id).first()
 
     if user_id == "1":
-        return '', 400
+        return '', 401
     elif not Users.query.filter_by(id=user_id).first():
         return '', 404
     elif int(user.admin) >= int(you.admin):
@@ -172,7 +172,7 @@ def _delete_(user_id):
         Postssug.query.filter_by(owner_id=user_id).delete()
         Users.query.filter_by(id=user_id).delete()
     else:
-        return '', 404
+        return '', 400
 
     db.session.commit()
     return '', 200
