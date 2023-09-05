@@ -54,6 +54,7 @@ def _users_():
 
 
 @users.route('stats', methods=['get'])
+@Auth.logged_user
 def _stats_():
     all_users = Users.query.order_by(desc(Users.score)).all()
 
