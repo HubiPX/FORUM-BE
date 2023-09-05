@@ -54,7 +54,6 @@ def _users_():
 
 
 @users.route('stats', methods=['get'])
-@Auth.logged_user
 def _stats_():
     all_users = Users.query.order_by(desc(Users.score)).all()
 
@@ -156,6 +155,33 @@ def _set_score_(user_id):
         return '', 400
 
     user.score = score
+
+    db.session.commit()
+    return '', 200
+
+
+@users.route("/<user_id>/store", methods=['post'])
+@Auth.logged_user
+def _store_(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+
+    if not Users.query.filter_by(id=user_id).first():
+        return '', 404
+
+    post = request.get_json()
+    score = post.get("score")
+
+    try:
+        score = int(score)
+    except ValueError:
+        return '', 400
+
+    x = user.score
+    if x >= score:
+        x = x - score
+        user.score = x
+    else:
+        return '', 400
 
     db.session.commit()
     return '', 200
