@@ -155,6 +155,9 @@ def _set_score_(user_id):
     except ValueError:
         return '', 400
 
+    if not score >= 0:
+        return '', 400
+
     user.score = score
 
     db.session.commit()
@@ -175,6 +178,9 @@ def _store_(user_id):
     try:
         score = int(score)
     except ValueError:
+        return '', 400
+
+    if not 0 < score <= 10000:
         return '', 400
 
     x = user.score
