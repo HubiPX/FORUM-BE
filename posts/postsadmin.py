@@ -15,7 +15,7 @@ def create_post():
 
     content = post.get("content")
 
-    if len(content) < 4:
+    if len(content) < 3:
         return '', 400
 
     today = datetime.datetime.now()
