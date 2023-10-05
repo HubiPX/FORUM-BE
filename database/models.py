@@ -18,6 +18,9 @@ class Users(db.Model):
     ban_date = db.Column(db.DateTime, nullable=True)
     score = db.Column(db.Integer, primary_key=False)
     last_login = db.Column(db.DateTime, nullable=True)
+    secret_numbers = db.Column(db.String(20), nullable=True)
+    game = db.Column(db.String(30), nullable=True)
+    game_info = db.Column(db.String(30), nullable=True)
 
 
 class Posts(db.Model):

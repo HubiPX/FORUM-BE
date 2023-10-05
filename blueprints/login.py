@@ -4,6 +4,7 @@ from database.models import Users
 from database.models import db
 from database.hash import Hash
 import datetime
+import random
 
 login = Blueprint('login', __name__)
 
@@ -34,9 +35,17 @@ def _login_():
     if user.last_login is None:
         user.last_login = today
         user.score = 10
+        secret_numbers = random.sample(range(1, 10), 6)
+        user.secret_numbers = ''.join(map(str, secret_numbers))
+        user.game = ""
+        user.game_info = ""
     elif today.date() != user.last_login.date():
         user.score += 10
         user.last_login = today
+        user.game = ""
+        user.game_info = ""
+        secret_numbers = random.sample(range(1, 10), 6)
+        user.secret_numbers = ''.join(map(str, secret_numbers))
     elif today.date() == user.last_login.date():
         user.last_login = today
 
