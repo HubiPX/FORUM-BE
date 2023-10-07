@@ -42,7 +42,7 @@ def get_my_posts():
             "content": x.content,
             "date": x.date
         })
-    return my_posts[::-1]
+    return my_posts
 
 
 @postsnews.route('all', methods=['get'])
@@ -59,7 +59,7 @@ def get_all_posts():
             "content": post.content,
             "date": post.date
         })
-    return print_posts[::-1]
+    return print_posts
 
 
 @postsnews.route('/<post_id>/delete', methods=['get'])

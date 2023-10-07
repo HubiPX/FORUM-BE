@@ -42,7 +42,7 @@ def get_my_posts():
             "content": x.content,
             "date": x.date
         })
-    return my_posts[::-1]
+    return my_posts
 
 
 @posts.route('all', methods=['get'])
@@ -62,8 +62,7 @@ def get_all_posts():
             })
         else:
             db.session.delete(post)
-
-    return print_posts[::-1]
+    return print_posts
 
 
 @posts.route('/<post_id>/delete', methods=['get'])
