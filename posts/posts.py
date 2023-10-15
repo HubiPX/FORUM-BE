@@ -62,7 +62,7 @@ def get_all_posts():
             })
         else:
             db.session.delete(post)
-    return print_posts
+    return print_posts[::-1]
 
 
 @posts.route('/<post_id>/delete', methods=['get'])

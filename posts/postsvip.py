@@ -59,7 +59,7 @@ def get_all_posts():
             "content": post.content,
             "date": post.date
         })
-    return print_posts
+    return print_posts[::-1]
 
 
 @postsv.route('/<post_id>/delete', methods=['get'])
