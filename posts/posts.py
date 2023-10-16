@@ -1,4 +1,5 @@
 from flask import Blueprint, session, request
+from sqlalchemy import desc
 from blueprints.auth import Auth
 from database.models import Posts, Users
 from database.models import Postsa, Postsbugs, Postsm, Postsnews, Postssug, Postsv
@@ -105,9 +106,15 @@ def edit_post(post_id):
     return '', 201
 
 
-@posts.route('/quantity', methods=['get'])
+@posts.route('/quantity/<user_id>', methods=['get'])
 @Auth.logged_user
-def quantity():
+def quantity(user_id):
+    user = Users.query.get(user_id)
+    if user is None:
+        return '', 400
+
+    all_users = Users.query.order_by(desc(Users.score)).all()
+    place = all_users.index(user) + 1
     "przypisanie do zmiennych ilości postów danego kanału"
     postsa = db.session.query(Postsa).count()
     postsm = db.session.query(Postsm).count()
@@ -115,5 +122,5 @@ def quantity():
     postsnews = db.session.query(Postsnews).count()
     postssug = db.session.query(Postssug).count()
     postsbugs = db.session.query(Postsbugs).count()
-    return {"postsa": postsa, "postsm": postsm, "postsv": postsv,
-            "postsnews": postsnews, "postssug": postssug, "postsbugs": postsbugs}
+    return {"postsa": postsa, "postsm": postsm, "postsv": postsv, "postsnews": postsnews,
+            "postssug": postssug, "postsbugs": postsbugs, "place": place}
