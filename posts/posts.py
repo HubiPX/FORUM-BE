@@ -123,4 +123,4 @@ def quantity(user_id):
     postssug = db.session.query(Postssug).count()
     postsbugs = db.session.query(Postsbugs).count()
     return {"postsa": postsa, "postsm": postsm, "postsv": postsv, "postsnews": postsnews,
-            "postssug": postssug, "postsbugs": postsbugs, "place": place}
+            "postssug": postssug, "postsbugs": postsbugs, "placeId": place}
