@@ -1,6 +1,7 @@
 from flask import Blueprint, session, request
 from blueprints.auth import Auth
 from database.models import Posts, Users
+from database.models import Postsa, Postsbugs, Postsm, Postsnews, Postssug, Postsv
 from database.models import db
 import datetime
 
@@ -102,3 +103,17 @@ def edit_post(post_id):
     post.content = new_content
     db.session.commit()
     return '', 201
+
+
+@posts.route('/quantity', methods=['get'])
+@Auth.logged_user
+def quantity():
+    "przypisanie do zmiennych ilości postów danego kanału"
+    postsa = db.session.query(Postsa).count()
+    postsm = db.session.query(Postsm).count()
+    postsv = db.session.query(Postsv).count()
+    postsnews = db.session.query(Postsnews).count()
+    postssug = db.session.query(Postssug).count()
+    postsbugs = db.session.query(Postsbugs).count()
+    return {"postsa": postsa, "postsm": postsm, "postsv": postsv,
+            "postsnews": postsnews, "postssug": postssug, "postsbugs": postsbugs}
