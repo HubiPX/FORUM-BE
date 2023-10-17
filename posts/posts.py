@@ -113,7 +113,7 @@ def quantity(user_id):
     if user is None:
         return '', 400
 
-    all_users = Users.query.order_by(desc(Users.score)).all()
+    all_users = Users.query.order_by(desc(Users.ranking)).all()
     place = all_users.index(user) + 1
     "przypisanie do zmiennych ilości postów danego kanału"
     postsa = db.session.query(Postsa).count()

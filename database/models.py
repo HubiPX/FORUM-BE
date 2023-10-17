@@ -17,6 +17,7 @@ class Users(db.Model):
     admin = db.Column(db.Integer, primary_key=False)
     ban_date = db.Column(db.DateTime, nullable=True)
     score = db.Column(db.Integer, primary_key=False)
+    ranking = db.Column(db.Integer, primary_key=False)
     last_login = db.Column(db.DateTime, nullable=True)
     secret_numbers = db.Column(db.String(20), nullable=True)
     game = db.Column(db.String(30), nullable=True)

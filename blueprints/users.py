@@ -49,19 +49,21 @@ def _users_():
         "is_admin": x.admin,
         "ban": x.ban_date,
         "last_login": x.last_login,
-        "score": x.score
+        "score": x.score,
+        "ranking": x.ranking
     } for x in all_users]
 
 
 @users.route('stats', methods=['get'])
 @Auth.logged_user
 def _stats_():
-    all_users = Users.query.order_by(desc(Users.score)).all()
+    all_users = Users.query.order_by(desc(Users.ranking)).all()
 
     return [{
         "username": x.username,
         "is_admin": x.admin,
         "last_login": x.last_login,
+        "ranking": x.ranking,
         "score": x.score,
         "place": all_users.index(x) + 1
     } for x in all_users]
@@ -232,6 +234,7 @@ def _game_():
 
     if secret == try_numbers:
         user.score += 100
+        user.ranking += 100
 
     db.session.commit()
     return '', 200
