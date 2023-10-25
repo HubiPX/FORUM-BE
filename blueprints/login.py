@@ -1,5 +1,4 @@
-import json
-from flask import Blueprint, request, session, Response
+from flask import Blueprint, request, session
 from database.models import Users
 from database.models import db
 from database.hash import Hash

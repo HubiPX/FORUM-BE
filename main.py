@@ -1,6 +1,9 @@
 from flask import Flask
 from datetime import timedelta
 from blueprints.login import login
+from blueprints.admin import admin
+from blueprints.game import game
+from blueprints.shop import shop
 from blueprints.logout import logout
 from blueprints.users import users
 from blueprints.info import info
@@ -47,6 +50,9 @@ app.register_blueprint(postsv, url_prefix='/api/postsv')
 app.register_blueprint(postsnews, url_prefix='/api/postsnews')
 app.register_blueprint(postsbugs, url_prefix='/api/postsbugs')
 app.register_blueprint(postssug, url_prefix='/api/postssug')
+app.register_blueprint(admin, url_prefix='/api/admin')
+app.register_blueprint(game, url_prefix='/api/game')
+app.register_blueprint(shop, url_prefix='/api/shop')
 
 if __name__ == "__main__":
     app.debug = True
