@@ -45,6 +45,7 @@ def _stats_():
         "last_login": x.last_login,
         "ranking": x.ranking,
         "score": x.score,
+        "vip_date": x.vip_date,
         "place": all_users.index(x) + 1
     } for x in all_users]
 

@@ -50,6 +50,9 @@ def _login_():
     elif today.date() == user.last_login.date():
         user.last_login = today
 
+    if user.vip_date is not None and today > user.vip_date:
+        user.vip_date = None
+
     session['logged_in'] = True
     session['user_id'] = user.id
     db.session.commit()

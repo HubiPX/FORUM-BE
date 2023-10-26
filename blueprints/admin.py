@@ -24,6 +24,7 @@ def _users_():
         "ban": x.ban_date,
         "last_login": x.last_login,
         "score": x.score,
+        "vip_date": x.vip_date,
         "ranking": x.ranking
     } for x in all_users]
 
@@ -93,6 +94,17 @@ def _lvl_admin_(user_id):
     elif user.id == 1 or not re.match("^[0-4]*$", is_admin) \
             or int(user.admin) >= int(you.admin) or int(you.admin) <= int(is_admin):
         return '', 403
+
+    if is_admin == '1':
+        if user.vip_date is None:
+            today = datetime.datetime.now()
+            vip_date = today + datetime.timedelta(days=30)
+            user.vip_date = vip_date
+        else:
+            vip_date = user.vip_date + datetime.timedelta(days=30)
+            user.vip_date = vip_date
+    else:
+        user.vip_date = None
 
     user.admin = is_admin
 

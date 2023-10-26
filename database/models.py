@@ -22,6 +22,10 @@ class Users(db.Model):
     secret_numbers = db.Column(db.String(20), nullable=True)
     game = db.Column(db.String(30), nullable=True)
     game_info = db.Column(db.String(30), nullable=True)
+    vip_date = db.Column(db.DateTime, nullable=True)
+    cnick_date = db.Column(db.DateTime, nullable=True)
+    rank_date = db.Column(db.DateTime, nullable=True)
+    shop_data = db.Column(db.String(20), nullable=True, default='000000')
 
 
 class Posts(db.Model):
