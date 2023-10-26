@@ -27,7 +27,7 @@ def _create_():
     if Users.query.filter_by(username=username).first():
         return '', 422
 
-    new_user = Users(username=username, password=hash_pwd, admin=0)
+    new_user = Users(username=username, password=hash_pwd)
 
     db.session.add(new_user)
     db.session.commit()
@@ -46,7 +46,11 @@ def _stats_():
         "ranking": x.ranking,
         "score": x.score,
         "vip_date": x.vip_date,
-        "place": all_users.index(x) + 1
+        "place": all_users.index(x) + 1,
+        "date": x.cnick_date,
+        "date1": x.rank_date,
+        "colornicku": x.color_nick,
+        "ranga": x.rank
     } for x in all_users]
 
 

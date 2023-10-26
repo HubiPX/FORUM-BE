@@ -14,7 +14,7 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(192), nullable=False)
-    admin = db.Column(db.Integer, primary_key=False)
+    admin = db.Column(db.Integer, primary_key=False, default=0)
     ban_date = db.Column(db.DateTime, nullable=True)
     score = db.Column(db.Integer, primary_key=False)
     ranking = db.Column(db.Integer, primary_key=False)
@@ -25,7 +25,8 @@ class Users(db.Model):
     vip_date = db.Column(db.DateTime, nullable=True)
     cnick_date = db.Column(db.DateTime, nullable=True)
     rank_date = db.Column(db.DateTime, nullable=True)
-    shop_data = db.Column(db.String(20), nullable=True, default='000000')
+    color_nick = db.Column(db.Integer, primary_key=False, default=0)
+    rank = db.Column(db.Integer, primary_key=False, default=0)
 
 
 class Posts(db.Model):

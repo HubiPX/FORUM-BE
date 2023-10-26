@@ -53,6 +53,12 @@ def _login_():
     if user.vip_date is not None and today > user.vip_date:
         user.vip_date = None
 
+    if user.cnick_date is not None and today > user.cnick_date:
+        user.vip_date = None
+
+    if user.rank_date is not None and today > user.rank_date:
+        user.vip_date = None
+
     session['logged_in'] = True
     session['user_id'] = user.id
     db.session.commit()

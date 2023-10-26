@@ -21,10 +21,11 @@ def _buy_(user_id):
     time = int(post.get("time"))
 
     x = user.score
-    shop_data = user.shop_data
+    color_nick = user.color_nick
+    rank = user.rank
     today = datetime.datetime.now()
 
-    if option == 10:
+    if option == 1:
         if user.vip_date is None:
             vip_date = today + datetime.timedelta(days=time)
             user.vip_date = vip_date
@@ -32,16 +33,14 @@ def _buy_(user_id):
         else:
             vip_date = user.vip_date + datetime.timedelta(days=time)
             user.vip_date = vip_date
-    elif option == 11:
+    elif option == 2:
         user.score = x + score
-    elif option <= 2 and shop_data[:3] == "000" and x >= -score:
-        new_shop_data = user.shop_data[:option] + "1" + user.shop_data[option + 1:]
-        user.shop_data = new_shop_data
+    elif 3 <= option <= 5 and color_nick == 0 and x >= -score:
+        user.color_nick = option
         user.cnick_date = today + datetime.timedelta(days=time)
         user.score = x + score
-    elif option >= 3 and shop_data[3:] == "000" and x >= -score:
-        new_shop_data = user.shop_data[:option] + "1" + user.shop_data[option + 1:]
-        user.shop_data = new_shop_data
+    elif 6 <= option <= 8 and rank == 0 and x >= -score:
+        user.rank = option
         user.rank_date = today + datetime.timedelta(days=time)
         user.score = x + score
     else:
