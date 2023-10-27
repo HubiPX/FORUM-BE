@@ -22,7 +22,7 @@ app = Flask(__name__)
 app.permanent_session_lifetime = timedelta(days=7)
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 app.config['SESSION_COOKIE_SECURE'] = True
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, origins="http://127.0.0.1:5500")
 app.config.from_object('database.config.Config')
 
 DEFAULT_ADMIN_USERNAME = "admin"
