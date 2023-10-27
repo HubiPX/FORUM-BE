@@ -36,11 +36,11 @@ def _buy_(user_id):
     elif option == 2:
         user.score = x + score
     elif 3 <= option <= 5 and color_nick == 0 and x >= -score:
-        user.color_nick = option
+        user.color_nick = option - 2
         user.cnick_date = today + datetime.timedelta(days=time)
         user.score = x + score
     elif 6 <= option <= 8 and rank == 0 and x >= -score:
-        user.rank = option
+        user.rank = option - 5
         user.rank_date = today + datetime.timedelta(days=time)
         user.score = x + score
     else:

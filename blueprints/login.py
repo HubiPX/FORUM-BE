@@ -52,14 +52,17 @@ def _login_():
 
     if user.vip_date is not None and today > user.vip_date:
         user.vip_date = None
+        user.admin = 0
 
     if user.cnick_date is not None and today > user.cnick_date:
         user.vip_date = None
+        user.color_nick = 0
 
     if user.rank_date is not None and today > user.rank_date:
         user.vip_date = None
+        user.rank = 0
 
     session['logged_in'] = True
     session['user_id'] = user.id
     db.session.commit()
-    return {"username": user.username, "is_admin": user.admin, "user_id": user.id}, 200
+    return {"username": user.username, "is_admin": user.admin, "user_id": user.id, "color_nick": user.color_nick}, 200

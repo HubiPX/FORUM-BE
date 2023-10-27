@@ -41,7 +41,7 @@ def _stats_():
 
     return [{
         "username": x.username,
-        "is_admin": x.admin,
+        "admin": x.admin,
         "last_login": x.last_login,
         "ranking": x.ranking,
         "score": x.score,
@@ -49,8 +49,8 @@ def _stats_():
         "place": all_users.index(x) + 1,
         "date": x.cnick_date,
         "date1": x.rank_date,
-        "colornicku": x.color_nick,
-        "ranga": x.rank
+        "color_nick": x.color_nick,
+        "rank": x.rank
     } for x in all_users]
 
 

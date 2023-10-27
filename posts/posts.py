@@ -58,6 +58,8 @@ def get_all_posts():
             print_posts.append({
                 "user": user.username,
                 "admin": user.admin,
+                "color_nick": user.color_nick,
+                "rank": user.rank,
                 "id": post.id,
                 "content": post.content,
                 "date": post.date

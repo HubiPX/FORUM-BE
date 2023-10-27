@@ -20,12 +20,14 @@ def _users_():
     return [{
         "id": x.id,
         "username": x.username,
-        "is_admin": x.admin,
+        "admin": x.admin,
         "ban": x.ban_date,
         "last_login": x.last_login,
         "score": x.score,
         "vip_date": x.vip_date,
-        "ranking": x.ranking
+        "ranking": x.ranking,
+        "color_nick": x.color_nick,
+        "rank": x.rank
     } for x in all_users]
 
 
