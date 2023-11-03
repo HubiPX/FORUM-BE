@@ -16,7 +16,7 @@ def _buy_(user_id):
         return '', 404
 
     post = request.get_json()
-    score = int(post.get("score"))
+
     option = int(post.get("option"))
     time = int(post.get("time"))
 
@@ -24,6 +24,31 @@ def _buy_(user_id):
     color_nick = user.color_nick
     rank = user.rank
     today = datetime.datetime.now()
+
+    prices = {
+        1: {'7dni': 0, '30dni': 0, '180dni': 0},
+        2: {'7dni': 0, '30dni': 0, '180dni': 0},
+        3: {'7dni': 300, '30dni': 1500, '180dni': 5000},
+        4: {'7dni': 400, '30dni': 1750, '180dni': 6000},
+        5: {'7dni': 500, '30dni': 2000, '180dni': 7500},
+        6: {'7dni': 100, '30dni': 300, '180dni': 1000},
+        7: {'7dni': 150, '30dni': 450, '180dni': 1500},
+        8: {'7dni': 200, '30dni': 600, '180dni': 2000},
+    }
+
+    if option not in prices:
+        return '', 400
+
+    price_option = prices[option]
+
+    if time == 7:
+        score = -price_option['7dni']
+    elif time == 30:
+        score = -price_option['30dni']
+    elif time == 180:
+        score = -price_option['180dni']
+    else:
+        return '', 400
 
     if option == 1:
         if user.vip_date is None:
