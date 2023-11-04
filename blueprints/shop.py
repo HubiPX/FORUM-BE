@@ -67,6 +67,8 @@ def _buy_(user_id):
         user.rank = option - 5
         user.rank_date = today + datetime.timedelta(days=time)
         user.score = x - score
+    elif x <= score:
+        return '', 403
     else:
         return '', 400
 
