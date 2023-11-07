@@ -40,6 +40,7 @@ def _stats_():
     all_users = Users.query.order_by(desc(Users.ranking)).all()
 
     return [{
+        "id": x.id,
         "username": x.username,
         "admin": x.admin,
         "last_login": x.last_login,

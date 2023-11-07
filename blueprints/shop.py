@@ -49,7 +49,7 @@ def _buy_():
     else:
         return '', 400
 
-    if option == 1:
+    if option == 1 and user.admin <= 1:
         if user.vip_date is None:
             vip_date = today + datetime.timedelta(days=time)
             user.vip_date = vip_date
