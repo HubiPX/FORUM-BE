@@ -47,8 +47,8 @@ def _stats_():
         "score": x.score,
         "vip_date": x.vip_date,
         "place": all_users.index(x) + 1,
-        "date": x.cnick_date,
-        "date1": x.rank_date,
+        "cnick_date": x.cnick_date,
+        "rank_date": x.rank_date,
         "color_nick": x.color_nick,
         "rank": x.rank
     } for x in all_users]

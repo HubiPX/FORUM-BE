@@ -87,12 +87,14 @@ def _del_(user_id):
     post = request.get_json()
     option = int(post.get("option"))
 
-    if option == 1:
+    if option == 1 and user.color_nick != 0:
         user.color_nick = 0
         user.cnick_date = None
-    elif option == 2:
+    elif option == 2 and user.rank != 0:
         user.rank = 0
         user.rank_date = None
+    else:
+        return '', 400
 
     db.session.commit()
     return '', 200

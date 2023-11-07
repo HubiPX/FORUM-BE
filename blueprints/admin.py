@@ -26,6 +26,8 @@ def _users_():
         "score": x.score,
         "vip_date": x.vip_date,
         "ranking": x.ranking,
+        "cnick_date": x.cnick_date,
+        "rank_date": x.rank_date,
         "color_nick": x.color_nick,
         "rank": x.rank
     } for x in all_users]
