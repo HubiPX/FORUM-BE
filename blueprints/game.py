@@ -10,8 +10,7 @@ game = Blueprint('game', __name__)
 @game.route('game', methods=['post'])
 @Auth.logged_user
 def _game_():
-    user_id = session.get("user_id")
-    user = Users.query.filter_by(id=user_id).first()
+    user = Users.query.filter_by(id=session["user_id"]).first()
     secret = user.secret_numbers
 
     post = request.get_json()
@@ -53,6 +52,5 @@ def _game_():
 @game.route('game-info', methods=['get'])
 @Auth.logged_user
 def _game_info_():
-    user_id = session.get("user_id")
-    user = Users.query.filter_by(id=user_id).first()
+    user = Users.query.filter_by(id=session["user_id"]).first()
     return {"game": user.game, "game_info": user.game_info}

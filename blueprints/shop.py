@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, session
 from database.models import db
 from database.models import Users
 from blueprints.auth import Auth
@@ -7,13 +7,13 @@ import datetime
 shop = Blueprint('shop', __name__)
 
 
-@shop.route("/<user_id>/buy", methods=['post'])
+@shop.route("/buy", methods=['post'])
 @Auth.logged_user
-def _buy_(user_id):
-    user = Users.query.filter_by(id=user_id).first()
-
-    if not Users.query.filter_by(id=user_id).first():
+def _buy_():
+    if not Users.query.filter_by(id=session["user_id"]).first():
         return '', 404
+
+    user = Users.query.filter_by(id=session["user_id"]).first()
 
     post = request.get_json()
     option = int(post.get("option"))
@@ -76,9 +76,10 @@ def _buy_(user_id):
     return '', 200
 
 
-@shop.route("/<user_id>/del", methods=['post'])
+@shop.route("/del", methods=['post'])
 @Auth.logged_user
-def _del_(user_id):
+def _del_():
+    user_id = session.get("user_id")
     user = Users.query.filter_by(id=user_id).first()
 
     if not Users.query.filter_by(id=user_id).first():

@@ -78,7 +78,7 @@ def delete_posts(post_id):
         if not Posts.query.filter_by(id=post_id).first():
             return '', 404
     else:
-        if not Posts.query.filter_by(owner_id=user.id, id=post_id).first():
+        if not Posts.query.filter_by(id=post_id, owner_id=user.id).first():
             return '', 404
 
     Posts.query.filter_by(id=post_id).delete()
@@ -108,10 +108,10 @@ def edit_post(post_id):
     return '', 201
 
 
-@posts.route('/quantity/<user_id>', methods=['get'])
+@posts.route('/quantity', methods=['get'])
 @Auth.logged_user
-def quantity(user_id):
-    user = Users.query.get(user_id)
+def quantity():
+    user = Users.query.get(session.get("user_id"))
     if user is None:
         return '', 400
 
