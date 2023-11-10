@@ -24,6 +24,8 @@ def _game_():
         user.game_info = ""
     elif user.game[-6:] == secret:
         return '', 400
+    elif user.game[-6:] == try_numbers:
+        return '', 406
     elif len(user.game) == 24:
         return '', 400
     else:
