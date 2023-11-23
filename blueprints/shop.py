@@ -1,10 +1,14 @@
-from flask import Blueprint, request, session
+from flask import Blueprint, request, session, redirect
 from database.models import db
 from database.models import Users
 from blueprints.auth import Auth
 import datetime
+import stripe
+
 
 shop = Blueprint('shop', __name__)
+stripe.api_key = 'sk_test_51ODP5ODGF0Nh3vajmnOnK05aTVkCCnNSmQdZB4e8KB1OWm6GBtzQFZixUvE4NH8rPJoYNGDkbCWSXSXn32nxVZoA006OF1HFMn'
+YOUR_DOMAIN = 'http://localhost:4400'
 
 
 @shop.route("/buy", methods=['post'])
@@ -107,3 +111,51 @@ def _del_():
 
     db.session.commit()
     return '', 200
+
+
+@shop.route('/webhook', methods=['POST'])
+def stripe_webhook():
+    print('płatność')
+    payload = request.get_data(as_text=True)
+    sig_header = request.headers.get('Stripe-Signature')
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, 'twój_endpoint_stripe_secret'
+        )
+    except ValueError as e:
+        print("Invalid payload")
+        return 'Invalid payload', 400
+    except stripe.error.SignatureVerificationError as e:
+        print("Invalid signature")
+        return 'Invalid signature', 400
+
+    # Obsługa różnych typów zdarzeń (event)
+    if event['type'] == 'payment_intent.succeeded':
+        payment_intent = event['data']['object']  # Obiekt udanej transakcji
+        print('Płatność udana:', payment_intent)
+
+        # Tutaj możesz dodać kod reagujący na udaną płatność
+
+    return '', 200
+
+
+@shop.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    # Podaj dokładne ID ceny produktu, który chcesz sprzedać
+                    'price': 'price_1ODPFGDGF0Nh3vajTMN8lnEf',
+                    'quantity': 1,
+                },
+            ],
+            mode='payment',
+            success_url=YOUR_DOMAIN + '/success',
+            cancel_url=YOUR_DOMAIN + '/cancel',
+        )
+    except Exception as e:
+        return str(e)
+
+    return redirect(checkout_session.url, code=303)

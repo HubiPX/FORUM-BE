@@ -2,3 +2,5 @@ flask_sqlalchemy
 flask
 htmlentities
 flask-cors
+SQLAlchemy
+stripe
