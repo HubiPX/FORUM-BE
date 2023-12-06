@@ -17,21 +17,21 @@ def _create_():
     username = post.get("username")
 
     if password != repassword:
-        return '', 422
+        return 'Podane hasła są różne!', 406
 
     if len(password) < 3 or len(username) < 3:
-        return '', 400
+        return 'Hasło lub login są za krótkie!', 400
 
     hash_pwd = Hash.hash_password(password)
 
     if Users.query.filter_by(username=username).first():
-        return '', 422
+        return 'Jest już użytkownik o takim nicku.', 406
 
     new_user = Users(username=username, password=hash_pwd)
 
     db.session.add(new_user)
     db.session.commit()
-    return '', 201
+    return 'Utworzono konto pomyślnie!', 201
 
 
 @users.route('stats', methods=['get'])
@@ -65,15 +65,19 @@ def _change_password_():
     new_pwd2 = post.get("new_password2")
 
     if new_pwd != new_pwd2:
-        return '', 422
+        return 'Nowe hasła są różne.', 406
 
-    if not current_pwd or not new_pwd or len(new_pwd) < 3 or current_pwd == new_pwd:
-        return '', 400
+    if not current_pwd or not new_pwd or not new_pwd2:
+        return 'Wypełnij wszystkie pola.', 400
+    elif len(new_pwd) < 3:
+        return 'Nowe hasło jest za krótkie.', 400
+    elif current_pwd == new_pwd:
+        return 'Nowe hasło musi być inne niż obecne.', 400
 
     user = Users.query.filter_by(id=session["user_id"]).first()
 
     if not Hash.verify_password(user.password, current_pwd):
-        return '', 401
+        return 'Stare hasło jest błędne.', 400
 
     pwd_hash = Hash.hash_password(new_pwd)
     user.password = pwd_hash

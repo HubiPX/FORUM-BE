@@ -16,7 +16,7 @@ def create_post():
     content = post.get("content")
 
     if len(content) < 3:
-        return '', 400
+        return 'Za krótka treść posta.', 400
 
     today = datetime.datetime.now()
 
@@ -71,10 +71,10 @@ def delete_posts(post_id):
 
     if user.admin:
         if not Postsa.query.filter_by(id=post_id).first():
-            return '', 404
+            return 'Brak posta o tym ID.', 404
     else:
         if not Postsa.query.filter_by(owner_id=user.id, id=post_id).first():
-            return '', 404
+            return 'Brak posta o tym ID, którego jesteś właścicielem.', 404
 
     Postsa.query.filter_by(id=post_id).delete()
     db.session.commit()
@@ -92,11 +92,11 @@ def edit_post(post_id):
     post = Postsa.query.filter_by(id=post_id, owner_id=user_id).first()
 
     if not post:
-        return '', 404
+        return 'Brak takiego posta.', 404
     elif new_content == '':
-        return '', 204
+        return 'Nowa treść posta jest pusta.', 204
     elif len(new_content) < 4:
-        return '', 400
+        return 'Nowa treść posta jest za krótka.', 400
 
     post.content = new_content
     db.session.commit()

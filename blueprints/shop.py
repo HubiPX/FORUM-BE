@@ -15,7 +15,7 @@ YOUR_DOMAIN = 'http://localhost:4400'
 @Auth.logged_user
 def _buy_():
     if not Users.query.filter_by(id=session["user_id"]).first():
-        return '', 404
+        return 'Brak takiego uzytkownika.', 404
 
     user = Users.query.filter_by(id=session["user_id"]).first()
 
@@ -40,7 +40,7 @@ def _buy_():
     }
 
     if option not in prices:
-        return '', 400
+        return 'Nie ma takiego przedmiotu.', 400
 
     price_option = prices[option]
 
@@ -51,7 +51,7 @@ def _buy_():
     elif time == 180:
         score = price_option['180dni']
     else:
-        return '', 400
+        return 'Błędna ilość dni.', 400
 
     if option == 1 and user.admin <= 1:
         if user.vip_date is None:
@@ -80,12 +80,12 @@ def _buy_():
             rank_date = user.rank_date + datetime.timedelta(days=time)
             user.rank_date = rank_date
     elif x <= score:
-        return '', 403
+        return 'Za mało exp, aby kupić ten przedmiot.', 403
     else:
         return '', 400
 
     db.session.commit()
-    return '', 200
+    return 'Zakup udany!', 200
 
 
 @shop.route("/del", methods=['post'])
@@ -95,7 +95,7 @@ def _del_():
     user = Users.query.filter_by(id=user_id).first()
 
     if not Users.query.filter_by(id=user_id).first():
-        return '', 404
+        return 'Brak takiego uzytkownika.', 404
 
     post = request.get_json()
     option = int(post.get("option"))

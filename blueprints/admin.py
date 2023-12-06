@@ -41,9 +41,9 @@ def _set_score_(user_id):
     you = Users.query.filter_by(id=your_id).first()
 
     if not Users.query.filter_by(id=user_id).first():
-        return '', 404
+        return 'Brak takiego uzytkownika.', 404
     elif int(user.admin) > int(you.admin):
-        return '', 403
+        return 'Poziom admina tego użytkownika jest większy niż twój!', 403
 
     post = request.get_json()
     new_score = post.get("new_score")
@@ -51,15 +51,15 @@ def _set_score_(user_id):
     try:
         score = int(new_score)
     except ValueError:
-        return '', 400
+        return 'Wprowadzona wartość nie jest liczbą.', 400
 
     if not score >= 0:
-        return '', 400
+        return 'Wprowadz liczbę większą od 0.', 400
 
     user.score = score
 
     db.session.commit()
-    return '', 200
+    return 'Ustawiono ilość expa użytkownikowi!', 200
 
 
 @admin.route("<user_id>/reset-password", methods=['get'])
@@ -70,9 +70,9 @@ def _reset_password_(user_id):
     you = Users.query.filter_by(id=your_id).first()
 
     if not user:
-        return '', 404
+        return 'Brak takiego użytkownika.', 404
     elif int(user.admin) >= int(you.admin):
-        return '', 403
+        return 'Twój poziom admina jest zbyt niski.', 403
 
     characters = string.ascii_lowercase + string.digits
     new_password = ''.join(choices(characters, k=6))
@@ -88,24 +88,42 @@ def _reset_password_(user_id):
 def _lvl_admin_(user_id):
     post = request.get_json()
     is_admin = post.get("admin")
+    days = 0
+
+    try:
+        int(is_admin)
+    except ValueError:
+        return 'Wprowadzona wartość nie jest liczbą.', 400
+
+    if len(is_admin) > 1 and is_admin[0] == '1':
+        if 10 < int(is_admin[1:]) < 366:
+            days = int(is_admin[1:])
+            is_admin = '1'
+        elif is_admin[0] == '1':
+            return 'Błędna ilość dni dla VIPa wprowadź 1-365.', 400
 
     your_id = session.get("user_id")
     you = Users.query.filter_by(id=your_id).first()
     user = Users.query.filter_by(id=user_id).first()
 
     if not user:
-        return '', 404
-    elif user.id == 1 or not re.match("^[0-4]*$", is_admin) \
-            or int(user.admin) >= int(you.admin) or int(you.admin) <= int(is_admin):
-        return '', 403
+        return 'Brak takiego użytkownika.', 404
+    elif user.id == 1:
+        return 'Nie można zmieniać poziomu admina RCON!', 403
+    elif not re.match("^[0-4]*$", is_admin):
+        return 'Podano błędny poziom admina.', 400
+    elif int(user.admin) >= int(you.admin):
+        return 'Twój poziom admina musi być większy niż użytkownika.', 403
+    elif int(you.admin) <= int(is_admin):
+        return 'Twój poziom admina musi być większy niż chcesz ustawić!', 403
 
     if is_admin == '1':
         if user.vip_date is None:
             today = datetime.datetime.now()
-            vip_date = today + datetime.timedelta(days=30)
+            vip_date = today + datetime.timedelta(days=days)
             user.vip_date = vip_date
         else:
-            vip_date = user.vip_date + datetime.timedelta(days=30)
+            vip_date = user.vip_date + datetime.timedelta(days=days)
             user.vip_date = vip_date
     else:
         user.vip_date = None
@@ -113,7 +131,7 @@ def _lvl_admin_(user_id):
     user.admin = is_admin
 
     db.session.commit()
-    return '', 200
+    return 'Zmieniłeś poziom admina użytkownikowi!', 200
 
 
 @admin.route("/<user_id>/delete", methods=['post'])
@@ -123,12 +141,12 @@ def _delete_(user_id):
     your_id = session.get("user_id")
     you = Users.query.filter_by(id=your_id).first()
 
-    if user_id == "1":
-        return '', 401
-    elif not Users.query.filter_by(id=user_id).first():
-        return '', 404
+    if not Users.query.filter_by(id=user_id).first():
+        return 'Brak takiego użytkownika.', 404
+    elif user_id == "1":
+        return 'Nie można banować i usuwać RCON admina!', 403
     elif int(user.admin) >= int(you.admin):
-        return '', 403
+        return 'Twój poziom admina musi być większy niż użytkownika.', 403
 
     post = request.get_json()
     days = post.get("days")
@@ -136,7 +154,7 @@ def _delete_(user_id):
     try:
         time = int(days)
     except ValueError:
-        return '', 400
+        return 'Wprowadzona wartość nie jest liczbą.', 400
 
     if time == 0:
         user.ban_date = None
@@ -154,7 +172,7 @@ def _delete_(user_id):
         Postssug.query.filter_by(owner_id=user_id).delete()
         Users.query.filter_by(id=user_id).delete()
     else:
-        return '', 400
+        return 'Wprowadz liczbę dni od 0 - 365 lub kod usuwania.', 400
 
     db.session.commit()
-    return '', 200
+    return 'Data banu dla użytkownika została zaktualizowana!', 200

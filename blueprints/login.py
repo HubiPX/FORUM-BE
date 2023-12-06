@@ -16,12 +16,12 @@ def _login_():
     password = post.get("password")
 
     if not username or not password:
-        return '', 400
+        return 'Brak nazwy użytkownika lub hasła!', 400
 
     user = Users.query.filter_by(username=username).first()
 
     if not user or not Hash.verify_password(user.password, password):
-        return '', 401
+        return 'Złe hasło lub nazwa użytkownika!', 401
 
     today = datetime.datetime.now()
 

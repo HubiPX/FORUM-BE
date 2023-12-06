@@ -16,18 +16,23 @@ def _game_():
     post = request.get_json()
     try_numbers = post.get("try_numbers")
 
-    if len(try_numbers) != 6 or not re.match("^[0-9]*$", try_numbers) or try_numbers == "":
-        return '', 400
+    try:
+        int(try_numbers)
+    except ValueError:
+        return 'Błędna wartość!', 400
+
+    if len(try_numbers) != 6 or not re.match("^[0-9]*$", try_numbers):
+        return 'Wypełnij wszystkie pola danej próby jedną liczbą od 0 do 9.', 400
 
     if user.game is None:
         user.game = try_numbers
         user.game_info = ""
     elif user.game[-6:] == secret:
-        return '', 400
+        return 'Wygrałeś! Zagraj ponownie jutro.', 400
     elif user.game[-6:] == try_numbers:
-        return '', 406
+        return 'Twoja próba nie różni się od poprzedniej.', 400
     elif len(user.game) == 24:
-        return '', 400
+        return 'Przegrałeś, zagraj ponownie jutro.', 400
     else:
         user.game += try_numbers
 
