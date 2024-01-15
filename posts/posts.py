@@ -52,9 +52,8 @@ def get_all_posts():
     all_posts = db.session.query(Posts, Users).join(Posts)
     print_posts = []
     today = datetime.datetime.now()
-
     for post, user in all_posts:
-        if not ((post.date - today).total_seconds() / 3600) > 24:
+        if not ((today - post.date).total_seconds() / 3600) > 24:
             print_posts.append({
                 "user": user.username,
                 "admin": user.admin,

@@ -1,3 +1,4 @@
+import math
 from flask import Blueprint, session, request
 from blueprints.auth import Auth
 from database.models import Postsm, Users
@@ -45,13 +46,19 @@ def get_my_posts():
     return my_posts
 
 
-@postsm.route('all', methods=['get'])
+@postsm.route('all/<page_nr>', methods=['get'])
 @Auth.logged_mod
-def get_all_posts():
+def get_all_posts(page_nr):
+    page_nr = int(page_nr)
+    pages = math.ceil(db.session.query(Postsm).count() / 10)
+
+    if pages < page_nr < 1:
+        return ''
     all_posts = db.session.query(Postsm, Users).join(Postsm)
+    all_posts = all_posts[::-1]
     print_posts = []
 
-    for post, user in all_posts:
+    for post, user in all_posts[((page_nr-1) * 10):page_nr*10]:
         print_posts.append({
             "user": user.username,
             "admin": user.admin,
@@ -61,7 +68,8 @@ def get_all_posts():
             "content": post.content,
             "date": post.date
         })
-    return print_posts[::-1]
+    print_posts.append(pages)
+    return print_posts
 
 
 @postsm.route('/<post_id>/delete', methods=['get'])

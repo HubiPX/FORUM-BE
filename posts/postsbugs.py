@@ -1,3 +1,4 @@
+import math
 from flask import Blueprint, session, request
 from blueprints.auth import Auth
 from database.models import Postsbugs, Users
@@ -45,13 +46,19 @@ def get_my_posts():
     return my_posts
 
 
-@postsbugs.route('all', methods=['get'])
+@postsbugs.route('all/<page_nr>', methods=['get'])
 @Auth.logged_user
-def get_all_posts():
+def get_all_posts(page_nr):
+    page_nr = int(page_nr)
+    pages = math.ceil(db.session.query(Postsbugs).count() / 10)
+
+    if pages < page_nr < 1:
+        return ''
     all_posts = db.session.query(Postsbugs, Users).join(Postsbugs)
+    all_posts = all_posts[::-1]
     print_posts = []
 
-    for post, user in all_posts:
+    for post, user in all_posts[((page_nr-1) * 10):page_nr*10]:
         print_posts.append({
             "user": user.username,
             "admin": user.admin,
@@ -61,7 +68,8 @@ def get_all_posts():
             "content": post.content,
             "date": post.date
         })
-    return print_posts[::-1]
+    print_posts.append(pages)
+    return print_posts
 
 
 @postsbugs.route('/<post_id>/delete', methods=['get'])
