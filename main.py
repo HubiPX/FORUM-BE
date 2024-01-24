@@ -1,4 +1,6 @@
-from flask import Flask
+from flask import Flask, render_template, request, session
+from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO, emit
 from datetime import timedelta
 from blueprints.login import login
 from blueprints.admin import admin
@@ -24,6 +26,8 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 app.config['SESSION_COOKIE_SECURE'] = True
 CORS(app, supports_credentials=True, origins="http://127.0.0.1:5500")
 app.config.from_object('database.config.Config')
+
+socketio = SocketIO(app, cors_allowed_origins="http://127.0.0.1:5500")
 
 DEFAULT_ADMIN_USERNAME = "admin"
 DEFAULT_ADMIN_PASSWORD = "admin"
@@ -56,4 +60,4 @@ app.register_blueprint(shop, url_prefix='/api/shop')
 
 if __name__ == "__main__":
     app.debug = True
-    app.run(port=4400)
+    socketio.run(app, port=4400, allow_unsafe_werkzeug=True)

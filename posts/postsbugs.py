@@ -50,15 +50,18 @@ def get_my_posts():
 @Auth.logged_user
 def get_all_posts(page_nr):
     page_nr = int(page_nr)
-    pages = math.ceil(db.session.query(Postsbugs).count() / 10)
+
+    volume = 10
+    pages = math.ceil(db.session.query(Postsbugs).count() / volume)
 
     if pages < page_nr < 1:
         return ''
-    all_posts = db.session.query(Postsbugs, Users).join(Postsbugs)
-    all_posts = all_posts[::-1]
-    print_posts = []
 
-    for post, user in all_posts[((page_nr-1) * 10):page_nr*10]:
+    offset = (page_nr - 1) * volume  # ile trzeba pominąć
+    posts = db.session.query(Postsbugs, Users).join(Postsbugs).order_by(Postsbugs.id.desc()).offset(offset).limit(volume)
+
+    print_posts = []
+    for post, user in posts:
         print_posts.append({
             "user": user.username,
             "admin": user.admin,
@@ -68,6 +71,7 @@ def get_all_posts(page_nr):
             "content": post.content,
             "date": post.date
         })
+
     print_posts.append(pages)
     return print_posts
 
