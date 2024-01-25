@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request, session
-from flask_sqlalchemy import SQLAlchemy
-from flask_socketio import SocketIO, emit
+from flask import Flask
+from flask_socketio import SocketIO
 from datetime import timedelta
 from blueprints.login import login
 from blueprints.admin import admin
