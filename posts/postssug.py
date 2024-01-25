@@ -51,14 +51,14 @@ def get_my_posts():
 def get_all_posts(page_nr):
     page_nr = int(page_nr)
 
-    volume = 10
-    pages = math.ceil(db.session.query(Postssug).count() / volume)
+    x = 10
+    pages = math.ceil(db.session.query(Postssug).count() / x)
 
     if pages < page_nr < 1:
         return ''
 
-    offset = (page_nr - 1) * volume  # ile trzeba pominąć
-    posts = db.session.query(Postssug, Users).join(Postssug).order_by(Postssug.id.desc()).offset(offset).limit(volume)
+    offset = (page_nr - 1) * x  # ile trzeba pominąć
+    posts = db.session.query(Postssug, Users).join(Postssug).order_by(Postssug.id.desc()).offset(offset).limit(x)
 
     print_posts = []
     for post, user in posts:
