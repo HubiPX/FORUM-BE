@@ -4,3 +4,4 @@ htmlentities
 flask-cors
 SQLAlchemy
 stripe
+flask-socketio
