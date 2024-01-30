@@ -111,9 +111,11 @@ def edit_post(post_id):
 @Auth.logged_user
 def quantity():
     user = Users.query.get(session.get("user_id"))
+
     if user is None:
         return '', 400
 
+    score = user.score
     all_users = Users.query.order_by(desc(Users.ranking)).all()
     place = all_users.index(user) + 1
     "przypisanie do zmiennych ilości postów danego kanału"
@@ -124,4 +126,4 @@ def quantity():
     postssug = db.session.query(Postssug).count()
     postsbugs = db.session.query(Postsbugs).count()
     return {"postsa": postsa, "postsm": postsm, "postsv": postsv, "postsnews": postsnews,
-            "postssug": postssug, "postsbugs": postsbugs, "placeId": place}
+            "postssug": postssug, "postsbugs": postsbugs, "placeId": place, "score": score}

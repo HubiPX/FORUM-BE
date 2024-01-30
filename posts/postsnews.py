@@ -29,23 +29,6 @@ def create_post():
     return '', 201
 
 
-@postsnews.route('', methods=['get'])
-@Auth.logged_admin
-def get_my_posts():
-    user_id = session.get("user_id")
-    user = Users.query.filter_by(id=user_id).first()
-    user_posts = user.postsnews
-    my_posts = []
-
-    for x in user_posts:
-        my_posts.append({
-            "id": x.id,
-            "content": x.content,
-            "date": x.date
-        })
-    return my_posts
-
-
 @postsnews.route('all/<page_nr>', methods=['get'])
 @Auth.logged_user
 def get_all_posts(page_nr):
@@ -113,3 +96,32 @@ def edit_post(post_id):
     post.content = new_content
     db.session.commit()
     return '', 201
+
+
+@postsnews.route('/search', methods=['post'])
+@Auth.logged_user
+def search_content():
+    post = request.get_json()
+
+    content = post.get("content")
+
+    if len(content) < 3:
+        return 'Za krótka treść.', 400
+
+    all_posts = db.session.query(Postsnews, Users).join(Postsnews)
+    print_posts = []
+
+    for post, user in all_posts:
+        if content.lower() in post.content.lower():
+            print_posts.append({
+                "user": user.username,
+                "admin": user.admin,
+                "color_nick": user.color_nick,
+                "rank": user.rank,
+                "id": post.id,
+                "content": post.content,
+                "date": post.date
+            })
+    print_posts = print_posts[::-1]
+    print_posts.append(1)
+    return print_posts
