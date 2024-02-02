@@ -59,7 +59,7 @@ def _set_score_(user_id):
     user.score = score
 
     db.session.commit()
-    return 'Ustawiono ilość expa użytkownikowi!', 200
+    return f'Ustawiono ilość expa użytkownikowi {user.username} na: {user.score}!', 200
 
 
 @admin.route("<user_id>/reset-password", methods=['get'])
@@ -131,7 +131,7 @@ def _lvl_admin_(user_id):
     user.admin = is_admin
 
     db.session.commit()
-    return 'Zmieniłeś poziom admina użytkownikowi!', 200
+    return f'Użytkownik {user.username} ma teraz poziom admina: {user.admin}!', 200
 
 
 @admin.route("/<user_id>/delete", methods=['post'])
@@ -158,10 +158,12 @@ def _delete_(user_id):
 
     if time == 0:
         user.ban_date = None
+        alert = f'Odbanowałeś gracza {user.username}!'
     elif 0 < time < 366:
         today = datetime.datetime.now()
         ban = today + datetime.timedelta(days=time)
         user.ban_date = ban
+        alert = f'Zbanowałeś gracza {user.username} na {time} dni!'
     elif time == 2580:
         Posts.query.filter_by(owner_id=user_id).delete()
         Postsa.query.filter_by(owner_id=user_id).delete()
@@ -171,8 +173,8 @@ def _delete_(user_id):
         Postsbugs.query.filter_by(owner_id=user_id).delete()
         Postssug.query.filter_by(owner_id=user_id).delete()
         Users.query.filter_by(id=user_id).delete()
+        alert = f'Usunołeś użytkownika {user.username}!'
     else:
         return 'Wprowadz liczbę dni od 0 - 365 lub kod usuwania.', 400
-
     db.session.commit()
-    return 'Data banu dla użytkownika została zaktualizowana!', 200
+    return alert, 200

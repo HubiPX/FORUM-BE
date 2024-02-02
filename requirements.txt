@@ -5,3 +5,4 @@ flask-cors
 SQLAlchemy
 stripe
 flask-socketio
+Flask-Testing

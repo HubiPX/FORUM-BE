@@ -8,7 +8,7 @@ from blueprints.auth import Auth
 users = Blueprint('users', __name__)
 
 
-@users.route('create', methods=['post'])
+@users.route('/create', methods=['post'])
 def _create_():
     post = request.get_json()
 
@@ -19,8 +19,14 @@ def _create_():
     if password != repassword:
         return 'Podane hasła są różne!', 406
 
-    if len(password) < 3 or len(username) < 3:
-        return 'Hasło lub login są za krótkie!', 400
+    if len(password) < 3:
+        return 'Hasło jest za krótkie!', 400
+    elif len(username) < 3:
+        return 'Login jest za krótki!', 400
+    elif len(password) > 20:
+        return 'Hasło jest za długie!', 400
+    elif len(username) > 15:
+        return 'Login jest za długi!', 400
 
     hash_pwd = Hash.hash_password(password)
 
@@ -34,7 +40,7 @@ def _create_():
     return 'Utworzono konto pomyślnie!', 201
 
 
-@users.route('stats', methods=['get'])
+@users.route('/stats', methods=['get'])
 @Auth.logged_user
 def _stats_():
     all_users = Users.query.order_by(desc(Users.ranking)).all()
@@ -55,7 +61,7 @@ def _stats_():
     } for x in all_users]
 
 
-@users.route('change-password', methods=['post'])
+@users.route('/change-password', methods=['post'])
 @Auth.logged_user
 def _change_password_():
     post = request.get_json()
@@ -71,6 +77,8 @@ def _change_password_():
         return 'Wypełnij wszystkie pola.', 400
     elif len(new_pwd) < 3:
         return 'Nowe hasło jest za krótkie.', 400
+    elif len(new_pwd) > 20:
+        return 'Nowe hasło jest za długie.', 400
     elif current_pwd == new_pwd:
         return 'Nowe hasło musi być inne niż obecne.', 400
 

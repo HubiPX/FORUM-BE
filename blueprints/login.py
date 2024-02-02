@@ -20,8 +20,10 @@ def _login_():
 
     user = Users.query.filter_by(username=username).first()
 
-    if not user or not Hash.verify_password(user.password, password):
-        return 'Złe hasło lub nazwa użytkownika!', 401
+    if not user:
+        return 'Brak użytkownika o tym nicku!', 401
+    elif not Hash.verify_password(user.password, password):
+        return 'Podane hasło jest nieprawidłowe!', 401
 
     today = datetime.datetime.now()
 
