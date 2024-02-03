@@ -2,6 +2,7 @@ import unittest
 import json
 from flask_testing import TestCase
 from main import app, db
+from loguru import logger
 
 
 class TestUserBlueprint(TestCase):
@@ -18,9 +19,45 @@ class TestUserBlueprint(TestCase):
         #db.session.remove()
         #db.drop_all()
 
+    def test_admin_login(self):
+        login_data = {
+            "username": "admin",
+            "password": "admin"
+        }
+        response = self.client.post('api/login', json=login_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["username"], "admin")
+        self.assertEqual(response.json["is_admin"], 4)
+        logger.info('Test 1 - poprawne logowanie ADMIN.')
+
+        response = self.client.get('/api/logout')
+        self.assertEqual(response.status_code, 200)
+        logger.info('Test 2 - poprawne wylogowanie ADMIN.')
+
+    def test_admin_show_users(self):
+        login_data = {
+            "username": "admin",
+            "password": "admin"
+        }
+        response = self.client.post('api/login', json=login_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["username"], "admin")
+        self.assertEqual(response.json["is_admin"], 4)
+        logger.info('Test 1 - poprawne logowanie ADMIN.')
+
+        response = self.client.get('/api/admin')
+        self.assertEqual(response.status_code, 200)
+        logger.info('Test 2 - poprawne pobranie listy użytkowników.')
+
+        response = self.client.get('/api/logout')
+        self.assertEqual(response.status_code, 200)
+        logger.info('Test 2 - poprawne wylogowanie ADMIN.')
+
     def test_create_user(self):
         data = {
-            "username": "test_users",
+            "username": "test_user",
             "password": "test_password",
             "repassword": "test_password"
         }
@@ -28,7 +65,46 @@ class TestUserBlueprint(TestCase):
         response = self.client.post('/api/users/create', json=data)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data.decode('utf-8'), 'Utworzono konto pomyślnie!')
-        print("Test - poprawne tworzenia konta.")
+        logger.info('Test 2 - poprawne tworzenia konta.')
+
+        login_data = {
+            "username": "test_user",
+            "password": "test_password"
+        }
+        response = self.client.post('api/login', json=login_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["username"], "test_user")
+        self.assertEqual(response.json["is_admin"], 0)
+        x = response.json["user_id"]
+        logger.info('Test 2 - poprawne logowanie na test_user.')
+
+        response = self.client.get('/api/logout')
+        self.assertEqual(response.status_code, 200)
+        logger.info('Test 2 - poprawne wylogowanie test_user.')
+
+        login_data = {
+            "username": "admin",
+            "password": "admin"
+        }
+        response = self.client.post('api/login', json=login_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["username"], "admin")
+        self.assertEqual(response.json["is_admin"], 4)
+        logger.info('Test 2 - poprawne logowanie ADMIN.')
+
+        data = {
+            "days": "2580"
+        }
+
+        response = self.client.post(f'api/admin/{x}/delete', json=data)
+        self.assertEqual(response.status_code, 200)
+        logger.info('Test 2 - poprawne usunięcie test_user.')
+
+        response = self.client.get('/api/logout')
+        self.assertEqual(response.status_code, 200)
+        logger.info('Test 2 - poprawne wylogowanie ADMIN.')
 
     def test_create_user_with_different_passwords(self):
         data = {
@@ -40,9 +116,20 @@ class TestUserBlueprint(TestCase):
         response = self.client.post('/api/users/create', json=data)
         self.assertEqual(response.status_code, 406)
         self.assertEqual(response.data.decode('utf-8'), 'Podane hasła są różne!')
-        print("Test - niepoprawne tworzenia konta z różnymi hasłami.")
+        logger.info('Test 3 - niepoprawne tworzenia konta z różnymi hasłami.')
 
-    def test_test_user_login(self):
+    def test_change_user(self):
+        data = {
+            "username": "test_user",
+            "password": "test_password",
+            "repassword": "test_password"
+        }
+
+        response = self.client.post('/api/users/create', json=data)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data.decode('utf-8'), 'Utworzono konto pomyślnie!')
+        logger.info('Test 2 - poprawne tworzenia konta.')
+
         login_data = {
             "username": "test_user",
             "password": "test_password"
@@ -53,29 +140,54 @@ class TestUserBlueprint(TestCase):
         self.assertEqual(response.json["username"], "test_user")
         self.assertEqual(response.json["is_admin"], 0)
         x = response.json["user_id"]
-        print("Test - poprawne logowanie na test_user.")
+        logger.info('Test 2 - poprawne logowanie na test_user.')
 
-    def test_admin_login(self):
+        response = self.client.get('/api/logout')
+        self.assertEqual(response.status_code, 200)
+        logger.info('Test 2 - poprawne wylogowanie test_user.')
+
         login_data = {
             "username": "admin",
             "password": "admin"
         }
         response = self.client.post('api/login', json=login_data)
 
-        # Sprawdź, czy odpowiedź jest poprawna
         self.assertEqual(response.status_code, 200)
-        # Dodatkowe sprawdzenie, czy uzyskane dane są zgodne z oczekiwaniami
         self.assertEqual(response.json["username"], "admin")
-        self.assertEqual(response.json["is_admin"], 4)  # Przykładowe sprawdzenie, oczekuje 0 dla admina
-        print("Test - poprawne logowanie ADMIN.")
+        self.assertEqual(response.json["is_admin"], 4)
+        logger.info('Test 2 - poprawne logowanie ADMIN.')
 
-        del_user_data = {
+        for i in range(4):
+            data = {
+                "admin": f"{i}"
+            }
+
+            response = self.client.post(f'api/admin/{x}/lvl-admin', json=data)
+            self.assertEqual(response.status_code, 200)
+            logger.info(f'Test 2 - poprawne ustawienie admin-lvl na {i} dla test_user.')
+
+        response = self.client.get(f'/api/admin/{x}/reset-password')
+        self.assertEqual(response.status_code, 200)
+        logger.info('Test 2 - poprawna zmiana hasła dla test_user.')
+
+        login_data = {
+            "new_score": "1000"
+        }
+        response = self.client.post(f'api/admin/{x}/set-score', json=login_data)
+        self.assertEqual(response.status_code, 200)
+        logger.info('Test 2 - poprawna zmiana ilości expa test_user.')
+
+        data = {
             "days": "2580"
         }
 
-        response = self.client.post(f'api/admin/27/delete', json=del_user_data)
+        response = self.client.post(f'api/admin/{x}/delete', json=data)
         self.assertEqual(response.status_code, 200)
-        print("Test - poprawne usunięcie test_user.")
+        logger.info('Test 2 - poprawne usunięcie test_user.')
+
+        response = self.client.get('/api/logout')
+        self.assertEqual(response.status_code, 200)
+        logger.info('Test 2 - poprawne wylogowanie ADMIN.')
 
 
 if __name__ == '__main__':
