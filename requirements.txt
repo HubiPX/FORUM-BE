@@ -6,3 +6,4 @@ SQLAlchemy
 stripe
 flask-socketio
 Flask-Testing
+loguru
