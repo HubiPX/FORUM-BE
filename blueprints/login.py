@@ -15,8 +15,10 @@ def _login_():
     username = post.get("username")
     password = post.get("password")
 
-    if not username or not password:
-        return 'Brak nazwy użytkownika lub hasła!', 400
+    if not username:
+        return 'Brak nazwy użytkownika!', 400
+    elif not password:
+        return 'Brak hasła!', 400
 
     user = Users.query.filter_by(username=username).first()
 
