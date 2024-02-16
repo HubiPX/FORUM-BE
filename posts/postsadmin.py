@@ -112,7 +112,13 @@ def search_content():
     print_posts = []
 
     for post, user in all_posts:
-        if content.lower() in post.content.lower():  # lower dla małych liter
+        post_content = post.content.lower()
+        found_all_words = True
+        for word in content.lower().split():  # Podział treści na wyrazy
+            if word not in post_content:
+                found_all_words = False
+                break
+        if found_all_words:
             print_posts.append({
                 "user": user.username,
                 "admin": user.admin,
@@ -122,6 +128,7 @@ def search_content():
                 "content": post.content,
                 "date": post.date
             })
+
     print_posts = print_posts[::-1]
     print_posts.append(1)  # dodanie 1 dla informacji o stronie bedzie tylko jedna
     return print_posts
