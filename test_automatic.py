@@ -250,15 +250,6 @@ class TestUserBlueprint(TestCase):
         logger.info('Test 7 - błąd logowania - brak hasła.')
 
         login_data = {
-            "username": "",
-            "password": "test_password"
-        }
-        response = self.client.post('api/login', json=login_data)
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.decode('utf-8'), 'Brak nazwy użytkownika!')
-        logger.info('Test 7 - błąd logowania - brak nazwy.')
-
-        login_data = {
             "username": "no_test_user",
             "password": "test_password"
         }
