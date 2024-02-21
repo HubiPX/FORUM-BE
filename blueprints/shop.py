@@ -20,8 +20,14 @@ def _buy_():
     user = Users.query.filter_by(id=session["user_id"]).first()
 
     post = request.get_json()
-    option = int(post.get("option"))
-    time = int(post.get("time"))
+    if post == {}:
+        return 'Brak danych.', 400
+
+    try:
+        option = int(post.get("option"))
+        time = int(post.get("time"))
+    except ValueError:
+        return 'Błędne dane.', 400
 
     x = user.score
     color_nick = user.color_nick

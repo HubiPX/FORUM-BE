@@ -96,11 +96,14 @@ def _lvl_admin_(user_id):
         return 'Wprowadzona wartość nie jest liczbą.', 400
 
     if len(is_admin) > 1 and is_admin[0] == '1':
-        if 10 < int(is_admin[1:]) < 366:
+        if 1 <= int(is_admin[1:]) < 366:
             days = int(is_admin[1:])
+            print(days)
             is_admin = '1'
         elif is_admin[0] == '1':
             return 'Błędna ilość dni dla VIPa wprowadź 1-365.', 400
+    elif len(is_admin) == 1 and is_admin[0] == '1':
+        return 'Nie wprowadzono ilości dni!', 400
 
     your_id = session.get("user_id")
     you = Users.query.filter_by(id=your_id).first()

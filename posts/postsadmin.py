@@ -34,7 +34,7 @@ def create_post():
 def get_all_posts(page_nr):
     page_nr = int(page_nr)
 
-    x = 10  # ilosc postow na stronie
+    x = 20  # ilosc postow na stronie
     pages = math.ceil(db.session.query(Postsa).count() / x)
 
     if page_nr < 1 or page_nr > pages:
