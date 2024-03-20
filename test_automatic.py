@@ -195,7 +195,10 @@ class TestUserBlueprint(TestCase):
         self.admin_login()
 
         for i in range(4):
-            self.user_set_admin_lvl(user_id, i)
+            if i != 1:
+                self.user_set_admin_lvl(user_id, i)
+            else:
+                self.user_set_admin_lvl(user_id, 110)  # 110 oznacza range 1 i 10dni
         logger.info('Test 5 - poprawne ustawienie admin-lvl od 0 do 3 dla test_user.')
         response = self.client.get(f'/api/admin/{user_id}/reset-password')
         self.assertEqual(response.status_code, 200)
